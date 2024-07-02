@@ -1,210 +1,78 @@
-#include <bits/types/stack_t.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include "libft/libft.h"
+#include "push_swap.h"
 
-#define RA 0
-#define RB 1
-#define RR 2
-#define RRA 3
-#define RRB 4
-#define RRR 5
-#define SA 6
-#define SB 7
-#define SS 8
-#define PA 9
-#define PB 10
-
-
-typedef struct Node {
-    int data;
-	int moves;
-    struct Node	*next;
-	struct Node *prev;
-} Node;
-
-typedef struct Stack {
-    Node	*top;
-	Node	*bottom;
-} Stack;
-
-int max(int a, int b)
+void	rota(Stack *a, int b)
 {
-	if (a < b)
-		return (b);
+	Node *temp;
+	int ind;
+
+	ind = 0;
+	temp = a->top;
+	while (!((temp->prev->data < b && b < temp->data) || (temp->prev->data > temp->data && temp->data > b) || (b > temp->prev->data && temp->data < temp->prev->data)))
+	{
+		temp = temp->next;
+		ind++;
+	}
+	if (ind < stacksize(a) - ind)
+		while (ind--)
+			ra(a);
 	else
-	 return (a);
+		while (stacksize(a) - ind++)
+			rra(a);
 }
 
-int min(int a, int b)
+void	push_back(Stack *a, Stack *b)
 {
-	if (a > b)
-		return (b);
-	else
-	 return (a);
+	while (stacksize(b))
+	{
+		rota(a, b->top->data);
+		pa(a, b);
+	}
 }
 
-void initStack(Stack *stack)
+void	solve_for3(Stack *a)
 {
-    stack->top = NULL;
-	stack->bottom = NULL;
+	if (a->top->data < a->top->next->data && a->top->data > a->bottom->data)
+		rra(a);
+	else if (a->top->data > a->top->next->data && a->bottom->data > a->top->data)
+		sa(a);
+	else if (a->top->data < a->top->next->data && a->top->next->data > a->bottom->data)
+	{
+		ra(a);
+		sa(a);
+		rra(a);
+	}
+	else if (a->top->data > a->top->next->data && a->bottom->data < a->bottom->prev->data)
+	{
+		sa(a);
+		rra(a);
+	}
+	else if(a->top->data > a->top->next->data && a->bottom->data > a->bottom->prev->data)
+		ra(a);
 }
 
-int isEmpty(Stack* stack) {
-    return stack->top == NULL;
-}
-
-void push(Stack* stack, int data) {
-    Node* newNode = (Node*)malloc(sizeof(Node));
-    newNode->data = data;
-    newNode->next = stack->top;
-	if (stack->bottom == NULL)
-		stack->bottom = newNode;
-	if (stack->top != NULL)
-		stack->top->prev = newNode;
-    stack->top = newNode;
-	stack->top->prev = stack->bottom;
-	stack->bottom->next = stack->top;
-}
-
-int pop(Stack* stack) {
-    Node* temp = stack->top;
-    int poppedData = temp->data;
-    stack->top = stack->top->next;
-	stack->bottom->next = stack->top;
-	stack->top->prev = stack->bottom;
-    free(temp);
-    return poppedData;
-}
-
-void sa(Stack* a) {
-    if (a->top && a->top->next) {
-        int temp = a->top->data;
-        a->top->data = a->top->next->data;
-        a->top->next->data = temp;
-    }
-}
-
-void sb(Stack* b) {
-    if (b->top && b->top->next) {
-        int temp = b->top->data;
-        b->top->data = b->top->next->data;
-        b->top->next->data = temp;
-    }
-}
-
-void ss(Stack* a, Stack* b) {
-    sa(a);
-    sb(b);
-}
-
-void pa(Stack* a, Stack* b) {
-    if (!isEmpty(b)) {
-        push(a, pop(b));
-    }
-}
-
-void pb(Stack* a, Stack* b) {
-    if (!isEmpty(a)) {
-        push(b, pop(a));
-    }
-}
-
-void ra(Stack* a) {
-    if (a->top && a->top->next) {
-        Node* temp = a->top;
-        Node* last = a->top;
-        while (last->next) {
-            last = last->next;
-        }
-        a->top = a->top->next;
-    }
-}
-
-void rb(Stack* b) {
-    if (b->top && b->top->next) {
-        Node* temp = b->top;
-        Node* last = b->top;
-        while (last->next) {
-            last = last->next;
-        }
-        b->top = b->top->next;
-    }
-}
-
-void rr(Stack* a, Stack* b) {
-    ra(a);
-    rb(b);
-}
-
-void rra(Stack* a) {
-    if (a->top && a->top->next) {
-        Node* temp = a->top;
-        Node* prev = NULL;
-        while (temp->next) {
-            prev = temp;
-            temp = temp->next;
-        }
-        a->top = temp;
-    }
-}
-
-void rrb(Stack* b) {
-    if (b->top && b->top->next) {
-        Node* temp = b->top;
-        Node* prev = NULL;
-        while (temp->next) {
-            prev = temp;
-            temp = temp->next;
-        }
-        b->top = temp;
-    }
-}
-
-void rrr(Stack* a, Stack* b) {
-    rra(a);
-    rrb(b);
-}
-
-size_t stacksize(Stack *stack)
-{
-	Node *curr;
-	size_t size;
-
-	if (stack->top == NULL)
-		return (0);
-	curr =stack->top;
-	size = 0;
-	do {
-		curr = curr->next;
-		size++;
-	}while (curr != stack->top);
-	return (size);
-}
-
-int moves(Stack *a, Stack *b, Node node)
+void moves(Stack *a, Stack *b, Node *node)
 {
 	int aind;
 	int total;
 	int bind;
-	Node temp;
+	Node *temp;
 
 	aind = 0;
 	temp = node;
-	while (temp.data != a->top->data)
+	while (temp != a->top)
 	{
-		temp = *temp.prev;
+		temp = temp->prev;
 		aind++;
 	}
 	bind = 0;
-	temp = *b->top;
-	while (!((temp.prev->data > node.data && node.data > temp.data) || (temp.prev->data < temp.data && temp.data < node.data) || (node.data < temp.prev->data && temp.data > temp.prev->data)))
+	temp = b->top;
+	while (!((temp->prev->data > node->data && node->data > temp->data) || (temp->prev->data < temp->data && temp->data < node->data) || (node->data < temp->prev->data && temp->data > temp->prev->data)))
 	{
-		temp = *temp.next;
+		temp = temp->next;
 		bind++;
 	}
-	printf("%d %d\n", aind, bind);
+	node->aind = aind;
+	node->bind = bind;
 	total = max(aind, bind);
 	if (total > max(stacksize(a) - aind, stacksize(b) - bind))
 		total = max(stacksize(a) - aind, stacksize(b) - bind);
@@ -212,8 +80,9 @@ int moves(Stack *a, Stack *b, Node node)
 		total = bind + stacksize(a) - aind;
 	if (total > stacksize(b) - bind + aind)
 		total = stacksize(b) - bind + aind;
-	return total;
+	node->moves = total;
 }
+
 
 
 void set_movec(Stack *stack_a, Stack *stack_b)
@@ -223,92 +92,114 @@ void set_movec(Stack *stack_a, Stack *stack_b)
 	curr = stack_a->top;
 	do
 	{
-		curr->moves = moves(stack_a, stack_b, *curr);
-		printf("data: %d move: %d\n", curr->data, curr->moves);
+		moves(stack_a, stack_b, curr);
 		curr = curr->next;
 	}while (curr != stack_a->top);
-	printf("\n");
-	curr = stack_b->top;
-	do
-	{
-		printf("curr: %d\n", curr->data);
-		curr = curr->next;
-	}while (curr != stack_b->top);
 }
 
-int *moveset(Stack *a, Stack *b)
+int	min_move(Stack *a)
 {
-	Node *curr;
-	Node *node;
-	int aind;
-	int bind;
-	int *ret;
-	int i;
-
-	node = a->top;
-	curr = a->top;
+	int min;
+	Node *temp;
+	
+	min = a->top->data;
+	temp = a->top;
 	do
 	{
-		if (curr->moves < node->moves)
-			node = curr;
-		curr = curr->next;
-	}while (curr != a->top);
+		if (min > temp->data)
+			min = temp->data;
+		temp = temp->next;
+	}while(temp != a->top);
+	return (min);
+}
 
+void	apply(Stack *a, Stack *b)
+{
+	Node *temp;
+	int i;
 
-	aind = 0;
-	curr = node;
-	while (curr->data != a->top->data)
-	{
-		curr = curr->prev;
-		aind++;
-	}
-	bind = 0;
-	curr = b->top;
-	while (!((curr->prev->data > node->data && node->data > curr->data) || (curr->prev->data < curr->data && curr->data < node->data) || (node->data < curr->prev->data && curr->data > curr->prev->data)))
-	{
-		curr = curr->next;
-		bind++;
-	}
+	temp = a->top;
+	while (temp->data != min_move(a))
+		temp = temp->next;
 	i = 0;
-	printf("%d %d\n", aind, bind);
-	ret = malloc((node->moves + 1) * sizeof(int));
-	if (node->moves ==  max(aind, bind))
+	if(temp->moves == max(temp->aind, temp->bind))
 	{
-		while (i < min(aind, bind))
-			ret[i++] = 0;
-		if (min(aind, bind) == aind)
-			while (i < node->moves)
-				ret[i++] = 1;
+		while (i < min(temp->aind, temp->bind))
+		{
+			rr(a, b);
+			i++;
+		}
+		if (temp->aind > temp->bind)
+			while (i < temp->moves)
+			{
+				ra(a);
+				i++;
+			}
 		else
-			while (i < node->moves)
-				ret[i++] = 2;
-	}	
-	else if (node->moves == max(stacksize(a) - aind, stacksize(b) - bind))
+			while (i < temp->moves)
+			{
+				rb(b);
+				i++;
+			}
+	}
+	else if (temp->moves == max(stacksize(a) - temp->aind, stacksize(b) - temp->bind))
 	{
-		while (i < min(stacksize(a) - aind, stacksize(b) - bind))
-			ret[i++] = 3;
-		if (min(stacksize(a) - aind, stacksize(b) - bind) == aind)
-			while (i < node->moves)
-				ret[i++] = 4;
+		while (i < min(stacksize(a) - temp->aind, stacksize(b) -  temp->bind))
+		{
+			rrr(a, b);
+			i++;
+		}
+		if (stacksize(a) - temp->aind > stacksize(b) - temp->bind)
+			while (i < temp->moves)
+			{
+				rra(a);
+				i++;
+			}
 		else
-			while (i < node->moves)
-				ret[i++] = 5;
-	}	
-	else if (node->moves == bind + stacksize(a) - aind)
-	{
-		while (i < bind)
-			ret[i++] = 6;
-		while (i < node->moves)
-			ret[i++] = 7;
+			while (i < temp->moves)
+			{
+				rrb(b);
+				i++;
+			}
 	}
-	else if (node->moves == stacksize(b) - bind + aind)
+	else if (temp->moves == temp->bind + stacksize(a) - temp->aind)
 	{
-		while (i < aind)
-			ret[i++] = 8;
-		while (i < node->moves)
-			ret[i++] = 9;
+		while (i < stacksize(a) - temp->aind)
+		{
+			rra(a);
+			i++;
+		}
+		while (i < temp->moves)
+		{
+			rb(b);
+			i++;
+		}
 	}
-	return (ret);
+	else if (temp->moves == stacksize(b) - temp->bind + temp->aind)
+	{
+		while (i < temp->aind)
+		{
+			ra(a);
+			i++;
+		}
+		while (i < temp->moves)
+		{
+			rrb(b);
+			i++;
+		}
+	}
+	pb(a, b);
+}
+
+void	solve(Stack *a, Stack *b)
+{	
+	while(stacksize(a) > 3)
+	{
+		set_movec(a, b);
+		apply(a, b);
+	}
+	solve_for3(a);
+	push_back(a, b);
 }
 
 int main(int argc, char **argv)
@@ -327,5 +218,5 @@ int main(int argc, char **argv)
 	pb(stack_a, stack_b);
 	if (stack_b->top->data < stack_b->top->next->data)
 		sb(stack_b);
-	set_movec(stack_a, stack_b);
+	solve(stack_a, stack_b);
 }
