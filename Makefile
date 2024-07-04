@@ -4,7 +4,7 @@ CFLAGS = -Wall -Wextra -Werror
 
 LIBS = libft/libft.a
 
-SRCS = moves.c push_swap.c
+SRCS = moves.c push_swap.c moves2.c utils.c utils2.c utils3.c solve.c case.c exit.c parser.c
 
 HEADERS = push_swap.h
 

@@ -1,68 +1,67 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   moves.c                                            :+:      :+:    :+:   */
+/*   utils2.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: emamati <emamati@student.42istanbul.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/04 14:41:36 by emamati           #+#    #+#             */
-/*   Updated: 2024/07/04 14:53:02 by emamati          ###   ########.fr       */
+/*   Created: 2024/07/04 14:48:57 by emamati           #+#    #+#             */
+/*   Updated: 2024/07/04 16:03:52 by emamati          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
 
-void	ra(t_stack *a)
+int	pop(t_stack *stack)
 {
-	if (a->top && a->top->next)
+	t_node	*temp;
+	int		poppeddata;
+
+	temp = stack->top;
+	poppeddata = temp->data;
+	if (stacksize(stack) > 1)
 	{
-		a->top = a->top->next;
-		a->bottom = a->bottom->next;
+		stack->top = stack->top->next;
+		stack->bottom->next = stack->top;
+		stack->top->prev = stack->bottom;
 	}
-	write(1, "ra\n", 3);
+	else
+	{
+		stack->top = NULL;
+		stack->bottom = NULL;
+	}
+	free(temp);
+	return (poppeddata);
 }
 
-void	rb(t_stack *b)
+int	stacksize(t_stack *stack)
 {
-	if (b->top && b->top->next)
+	t_node	*curr;
+	int		size;
+
+	if (stack->top == NULL)
+		return (0);
+	curr = stack->top->next;
+	size = 1;
+	while (curr != stack->top)
 	{
-		b->top = b->top->next;
-		b->bottom = b->bottom->next;
+		curr = curr->next;
+		size++;
 	}
-	write(1, "rb\n", 3);
+	return (size);
 }
 
-void	rr(t_stack *a, t_stack *b)
-{
-	if (a->top && a->top->next)
-	{
-		a->top = a->top->next;
-		a->bottom = a->bottom->next;
-	}
-	if (b->top && b->top->next)
-	{
-		b->top = b->top->next;
-		b->bottom = b->bottom->next;
-	}
-	write(1, "rr\n", 3);
-}
-
-void	rra(t_stack *a)
+void	rrr(t_stack *a, t_stack *b)
 {
 	if (a->top && a->top->next)
 	{
 		a->top = a->top->prev;
 		a->bottom = a->bottom->prev;
 	}
-	write(1, "rra\n", 4);
-}
-
-void	rrb(t_stack *b)
-{
 	if (b->top && b->top->next)
 	{
 		b->top = b->top->prev;
 		b->bottom = b->bottom->prev;
 	}
-	write(1, "rrb\n", 4);
+	write(1, "rrr\n", 4);
 }
