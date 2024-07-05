@@ -16,13 +16,13 @@ void	free_nodes(t_stack *stack)
 {
 	t_node	*curr;
 	t_node	*temp;
-	
+
 	if (stack->bottom && stack->bottom->next)
 		stack->bottom->next = NULL;
 	if (stack->top)
 	{
 		curr = stack->top;
-		while (curr->next)
+		while (curr)
 		{
 			temp = curr;
 			curr = curr->next;
@@ -48,7 +48,7 @@ void	free_stacks(t_stack *a, t_stack *b)
 void	freeargs(char **args)
 {
 	int	i;
-	
+
 	i = 0;
 	while (args[i])
 		free(args[i++]);

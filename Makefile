@@ -14,8 +14,9 @@ TARGET = push_swap
  
 SUBDIRS =  libft
 
-$(TARGET): build_subdirs $(OBJS)
-	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS) $(LIBS)
+$(TARGET): $(OBJS)
+	$(MAKE) -C libft;\
+	$(CC) $(CFLAGS) $(OBJS) -o $(TARGET) $(LIBS)
 
 %.o: %.c $(HEADERS)
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -25,11 +26,6 @@ clean: clean_subdirs
 
 fclean: fclean_subdirs clean
 	rm -f $(TARGET)
-
-build_subdirs:
-	for dir in $(SUBDIRS); do\
-			$(MAKE) -C $$dir;\
-			done
 
 clean_subdirs:
 	for dir in $(SUBDIRS); do\
@@ -45,4 +41,4 @@ re: fclean all
 
 all: $(TARGET)
 
-.PHONY: all clean fclean re build_subdirs clean_subdirs fclean_subdirs
+.PHONY: all clean fclean re clean_subdirs fclean_subdirs

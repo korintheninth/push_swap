@@ -12,8 +12,58 @@
 
 #include "push_swap.h"
 
+int	get_minind(t_stack *a)
+{
+	int		ind;
+	int		minind;
+	t_node	*min;
+	t_node	*curr;
+
+	ind = 1;
+	minind = 0;
+	curr = a->top->next;
+	min = a->top;
+	while (curr != a->top)
+	{
+		if (curr->data < min->data)
+		{
+			min = curr;
+			minind = ind;
+		}
+		curr = curr->next;
+		ind++;
+	}
+	return (minind);
+}
+
+void	final_rot(t_stack *a)
+{
+	int	minind;
+
+	minind = get_minind(a);
+	if (minind < (stacksize(a) - minind))
+	{
+		while (minind--)
+			ra(a);
+	}
+	else
+	{
+		while (stacksize(a) - minind++)
+			rra(a);
+	}
+}
+
 void	solve(t_stack *a, t_stack *b)
 {
+	if (stacksize(a) >= 5)
+	{
+		pb(a, b);
+		pb(a, b);
+		if (b->top->data < b->bottom->data)
+			sb(b);
+	}
+	if (stacksize(a) == 4)
+		pb(a, b);
 	while (stacksize(a) > 3)
 	{
 		set_movec(a, b);
@@ -21,6 +71,7 @@ void	solve(t_stack *a, t_stack *b)
 	}
 	solve_for3(a);
 	push_back(a, b);
+	final_rot(a);
 }
 
 int	get_moves(int aind, int bind, t_stack *a, t_stack *b)

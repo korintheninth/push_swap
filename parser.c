@@ -10,7 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft/libft.h"
 #include "push_swap.h"
+#include <unistd.h>
 
 long long int	new_atoi(const char *str)
 {
@@ -47,11 +49,12 @@ int	check_max_min_int(char *arg)
 	i = 0;
 	while (arg[i])
 	{
-		if (!ft_isdigit(arg[i]))
+		if (!(ft_isdigit(arg[i])
+				|| (i == 0 && (arg[i] == '-' || arg[i] == '+'))))
 			return (0);
 		i++;
 	}
-	if (new_atoi(arg) != 0 && arg[0] == 0)
+	if (ft_atoi(arg) != 0 && arg[0] == '0')
 		return (0);
 	if (arg[1] == '0' && arg[0] == '-')
 		return (0);
@@ -75,9 +78,9 @@ int	check_err(char **argv)
 		j = 0;
 		while (j < i)
 		{
-			if (argv[j] == argv[i])
+			if (ft_atoi(argv[j]) == ft_atoi(argv[i]))
 				return (0);
-				j++;
+			j++;
 		}
 		i++;
 	}
@@ -89,27 +92,29 @@ void	fillstack(t_stack *a, char **args)
 	int	i;
 
 	i = 0;
-	while (args[i++])
-		push(a, ft_atoi(args[i]));
+	while (args[i])
+		i++;
+	i--;
+	while (i >= 0)
+		push(a, ft_atoi(args[i--]));
 }
 
-int	parser(int	argc, char **argv, t_stack *a)
+int	parser(int argc, char **argv, t_stack *a)
 {
 	char	**args;
-	int		i;
 
 	if (argc == 1)
-		return(0);
+		return (0);
 	if (argc == 2)
 		args = ft_split(argv[1], ' ');
 	else
 		args = argv;
 	if (!check_err(args))
 	{
-		write(1, "Error", 5);
+		write(1, "Error\n", 6);
 		if (args != argv)
 			freeargs(args);
-		return(0);
+		return (0);
 	}
 	fillstack(a, args);
 	if (args != argv)

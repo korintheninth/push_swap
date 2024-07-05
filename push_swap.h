@@ -13,9 +13,10 @@
 #ifndef PUSH_SWAP_H
 # define PUSH_SWAP_H
 # include "libft/libft.h"
-# include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
+# define INT32_MAX 2147483647
+# define INT32_MIN -2147483648
 
 typedef struct node
 {
@@ -65,6 +66,6 @@ void			case_4(t_node *temp, t_stack *a, t_stack *b);
 void			free_stacks(t_stack *a, t_stack *b);
 void			apply(t_stack *a, t_stack *b);
 void			freeargs(char **args);
-int				parser(int	argc, char **argv, t_stack *a);
+int				parser(int argc, char **argv, t_stack *a);
 
 #endif

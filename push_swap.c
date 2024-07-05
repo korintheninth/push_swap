@@ -11,16 +11,15 @@
 /* ************************************************************************** */
 
 #include "push_swap.h"
+#include <unistd.h>
 
 void	apply(t_stack *a, t_stack *b)
 {
 	t_node	*temp;
-	int		i;
 
 	temp = a->top;
 	while (temp->moves != min_move(a))
 		temp = temp->next;
-	i = 0;
 	if (temp->moves == max(temp->aind, temp->bind))
 		case_1(temp, a, b);
 	else if (temp->moves == max(stacksize(a) - temp->aind, stacksize(b)
@@ -35,7 +34,7 @@ void	apply(t_stack *a, t_stack *b)
 
 int	main(int argc, char **argv)
 {
-	t_stack *a;
+	t_stack	*a;
 	t_stack	*b;
 
 	a = malloc(sizeof(t_stack));
@@ -46,7 +45,15 @@ int	main(int argc, char **argv)
 		init_stack(b);
 	}
 	else
-		return(-1);
+		return (-1);
 	if (!parser(argc, argv, a))
+	{
 		free_stacks(a, b);
+		return (-1);
+	}
+	if (stacksize(a) > 2)
+	{
+		solve(a, b);
+	}
+	free_stacks(a, b);
 }
