@@ -52,8 +52,8 @@ int	main(int argc, char **argv)
 		return (-1);
 	}
 	if (stacksize(a) > 2)
-	{
 		solve(a, b);
-	}
+	if (stacksize(a) == 2 && a->top->data > a->bottom->data)
+		sa(a);
 	free_stacks(a, b);
 }
